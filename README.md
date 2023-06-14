@@ -3,7 +3,9 @@ This is the official repo accompanying the ICML 2023 publication [*Differentiabl
 Generalization*](https://arxiv.org/abs/2306.00751).
 
 ## Setup
-TODO in next commit
+This repo has been tested with Python 3.8.13. You can install the necessary packages by running:
+`pip install -r requirements.txt`. Some packages such as `pytorch` may need to be installed
+via their own directions in order to install the correct version for your hardware (CPU or GPU).
 
 ## Data
 Data available at https://huggingface.co/datasets/rfernand/basic_sentence_transforms. The primary four tasks used in the 
