@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, label, children=None, key=None):
+    def __init__(self, label, children=None):
         self.label = label
         self.children = children if children else []
 

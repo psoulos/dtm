@@ -4,27 +4,22 @@ import torch.nn.functional as F
 from node import Node
 
 class TPR(nn.Module):
-    def __init__(self, args, num_fillers, num_roles, d_filler=32, d_role=32, filler_emb_gain=1) -> None:
+    def __init__(self, args, num_fillers, num_roles, d_filler=32, d_role=32) -> None:
         super().__init__()
-        self.filler_emb = nn.Embedding(num_fillers, d_filler) # +1 for <empty>
+        self.filler_emb = nn.Embedding(num_fillers, d_filler)
         self.role_emb = nn.Embedding(num_roles, d_role)
-        self.learn_filler_embed = args.learn_filler_embed
-        if not args.learn_filler_embed:
-            self.filler_emb.requires_grad = False
-            self.filler_emb.weight.requires_grad = False
+
+        self.filler_emb.requires_grad = False
+        self.filler_emb.weight.requires_grad = False
+
         self.role_emb.requires_grad = False
         self.role_emb.weight.requires_grad = False
-        # Attributes
-        self.proj_filler_to_unit_ball = args.proj_filler_to_unit_ball
-        self.filler_emb_gain = filler_emb_gain
+
         self.reset_parameters()
     
     def reset_parameters(self):
-        if self.learn_filler_embed:
-            nn.init.xavier_uniform_(self.filler_emb.weight, gain=self.filler_emb_gain)
-        else:
-            nn.init.orthogonal_(self.filler_emb.weight, gain=self.filler_emb_gain)
-            self.filler_emb.weight.data[0, :] = 0
+        nn.init.orthogonal_(self.filler_emb.weight, gain=1)
+        self.filler_emb.weight.data[0, :] = 0
         nn.init.orthogonal_(self.role_emb.weight, gain=1)
         self.filler_emb.weight.data[0, :] = 0
 
@@ -32,8 +27,6 @@ class TPR(nn.Module):
         '''
         Given a binary tree represented by a tensor, construct the TPR
         '''
-        if self.proj_filler_to_unit_ball:
-            self.filler_emb.weight.data = self.filler_emb.weight.data / self.filler_emb.weight.data.norm(p=2, dim=-1).unsqueeze(1)
         x = self.filler_emb(tree_tensor)
         return torch.einsum('brm,rn->bmn', x, self.role_emb.weight)
     
@@ -89,10 +82,6 @@ def build_D(role_emb):
 def DecodedTPR2Tree(decoded_tpr, eps=1e-2):
     contain_symbols = decoded_tpr.norm(p=2, dim=-1) > eps
     return torch.where(contain_symbols, decoded_tpr.argmax(dim=-1), 0)
-
-def gumbel_softmax(pi, t=1):
-    u = torch.rand_like(pi)
-    return F.softmax((-(-u.log()).log() + pi.log())*t, dim=-1)
 
 # works for binary trees only
 def Symbols2NodeTree(index_tree, i2v):
