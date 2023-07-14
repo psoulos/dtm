@@ -57,12 +57,19 @@ You can set the $WANDB_API_KEY environment variable to use wandb.
 ## Citation
 If you use this code, please cite the work:
 ```bibtex
-@InProceedings{soulos23a, 
-  title = {Differentiable Tree Operations Promote Compositional Generalization}, 
-  author = {Soulos, Paul and Hu, Edward and McCurdy, Kate and Chen, Yunmo and Fernandez, Roland and Smolensky, Paul and Gao, Jianfeng}, 
-  booktitle = {Proceedings of the 40th International Conference on Machine Learning}, 
-  year = {2023}, 
-  series = {Proceedings of Machine Learning Research}, 
-  publisher = {PMLR} 
-} 
+@InProceedings{pmlr-v202-soulos23a,
+  title = 	 {Differentiable Tree Operations Promote Compositional Generalization},
+  author =       {Soulos, Paul and Hu, Edward J and Mccurdy, Kate and Chen, Yunmo and Fernandez, Roland and Smolensky, Paul and Gao, Jianfeng},
+  booktitle = 	 {Proceedings of the 40th International Conference on Machine Learning},
+  pages = 	 {32499--32520},
+  year = 	 {2023},
+  editor = 	 {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+  volume = 	 {202},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {23--29 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {https://proceedings.mlr.press/v202/soulos23a/soulos23a.pdf},
+  url = 	 {https://proceedings.mlr.press/v202/soulos23a.html},
+  abstract = 	 {In the context of structure-to-structure transformation tasks, learning sequences of discrete symbolic operations poses significant challenges due to their non-differentiability. To facilitate the learning of these symbolic sequences, we introduce a differentiable tree interpreter that compiles high-level symbolic tree operations into subsymbolic matrix operations on tensors. We present a novel Differentiable Tree Machine (DTM) architecture that integrates our interpreter with an external memory and an agent that learns to sequentially select tree operations to execute the target transformation in an end-to-end manner. With respect to out-of-distribution compositional generalization on synthetic semantic parsing and language generation tasks, DTM achieves 100% while existing baselines such as Transformer, Tree Transformer, LSTM, and Tree2Tree LSTM achieve less than 30%. DTM remains highly interpretable in addition to its perfect performance.}
+}
 ```
