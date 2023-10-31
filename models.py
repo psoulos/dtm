@@ -119,6 +119,10 @@ class NeuralTreeAgent(nn.Module):
                                                        dropout=dropout, activation=activation,
                                                        layer_norm_eps=layer_norm_eps,
                                                        batch_first=True, norm_first=bool(transformer_norm_first))
+
+        self.op_dist_fn = op_dist_fn
+        self.arg_dist_fn = arg_dist_fn
+
         self.layers = nn.ModuleList()
         self.arg_logits_list = nn.ModuleList()
         self.root_filler_list = nn.ModuleList()
