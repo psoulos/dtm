@@ -133,17 +133,12 @@ class NeuralTreeAgent(nn.Module):
 
             # 4 for the 4 arguments, car, cdr, cons1, cons2
             arg_logits = nn.Linear(d_model, 4)
-            nn.init.normal_(arg_logits.weight, std=0.02)
-            nn.init.zeros_(arg_logits.bias)
             self.arg_logits_list.append(arg_logits)
 
             root_filler = nn.Linear(d_model, d_filler)
             self.root_filler_list.append(root_filler)
 
             op_logits = nn.Linear(d_model, num_ops)
-            nn.init.normal_(op_logits.weight, std=0.02)
-            nn.init.zeros_(op_logits.bias)
-
             self.op_logits_list.append(op_logits)
 
     def forward(self, encodings, step):

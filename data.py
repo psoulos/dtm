@@ -36,7 +36,7 @@ class BinaryT2TDataset(Dataset):
 
         dataset_max_depth = 0
 
-        is_xy_file = True
+        is_xy_file = False
         for line in data:
             if is_xy_file:
                 inout_pair = line.split('\t')
