@@ -21,7 +21,6 @@ class TPR(nn.Module):
         nn.init.orthogonal_(self.filler_emb.weight, gain=1)
         self.filler_emb.weight.data[0, :] = 0
         nn.init.orthogonal_(self.role_emb.weight, gain=1)
-        self.filler_emb.weight.data[0, :] = 0
 
     def forward(self, tree_tensor):
         '''

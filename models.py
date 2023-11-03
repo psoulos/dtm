@@ -119,32 +119,42 @@ class NeuralTreeAgent(nn.Module):
                                                        dropout=dropout, activation=activation,
                                                        layer_norm_eps=layer_norm_eps,
                                                        batch_first=True, norm_first=bool(transformer_norm_first))
+
+        self.op_dist_fn = op_dist_fn
+        self.arg_dist_fn = arg_dist_fn
+
         self.layers = nn.ModuleList()
+        self.arg_logits_list = nn.ModuleList()
+        self.root_filler_list = nn.ModuleList()
+        self.op_logits_list = nn.ModuleList()
         for i in range(steps):
             encoder_norm = nn.LayerNorm(d_model, eps=layer_norm_eps) if transformer_norm_first else None
             self.layers.append(nn.TransformerEncoder(transformer_layer, transformer_layers_per_step, encoder_norm))
 
-        # 4 for the 4 arguments, car, cdr, cons1, cons2
-        self.arg_logits = nn.Linear(d_model, 4)
-        self.root_filler = nn.Linear(d_model, d_filler)
-        self.op_logits = nn.Linear(d_model, num_ops)
-        self.op_dist_fn = op_dist_fn
-        self.arg_dist_fn = arg_dist_fn
+            # 4 for the 4 arguments, car, cdr, cons1, cons2
+            arg_logits = nn.Linear(d_model, 4)
+            self.arg_logits_list.append(arg_logits)
+
+            root_filler = nn.Linear(d_model, d_filler)
+            self.root_filler_list.append(root_filler)
+
+            op_logits = nn.Linear(d_model, num_ops)
+            self.op_logits_list.append(op_logits)
 
     def forward(self, encodings, step):
         # TODO: move pashamax, sparsemax, softmax from the old car/cdr/consnet to here for op_dist and arg_weights
         encodings = self.layers[step](encodings)
 
-        op_logits = self.op_logits(encodings[:, 0, :])
+        op_logits = self.op_logits_list[step](encodings[:, 0, :])
         if self.op_dist_fn == 'softmax':
             op_dist = F.softmax(op_logits, dim=-1)
         elif self.op_dist_fn == 'gumbel':
             op_dist = F.gumbel_softmax(op_logits, tau=self.gumbel_temp)
         else:
             raise ValueError('Unknown op_dist_fn: {}'.format(self.op_dist_fn))
-        root_filler = self.root_filler(encodings[:, 1, :])
+        root_filler = self.root_filler_list[step](encodings[:, 1, :])
 
-        arg_logits = self.arg_logits(encodings[:, 2:, :])
+        arg_logits = self.arg_logits_list[step](encodings[:, 2:, :])
         if self.arg_dist_fn == 'softmax':
             arg_weights = F.softmax(arg_logits, dim=1)
         elif self.arg_dist_fn == 'gumbel':
