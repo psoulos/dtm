@@ -36,22 +36,10 @@ class BinaryT2TDataset(Dataset):
 
         dataset_max_depth = 0
 
-        is_xy_file = False
         for line in data:
-            if is_xy_file:
-                inout_pair = line.split('\t')
-                tt = None
-
-                if len(inout_pair) > 2:
-                    # remove 3rd field used for filtering
-                    tt = inout_pair[2].strip()
-                    inout_pair = inout_pair[0:2]
-                in_node = text_tree_to_node(inout_pair[0])
-                out_node = text_tree_to_node(inout_pair[1])
-            else:
-                inout_pair = json.loads(line)
-                in_node = text_tree_to_node(inout_pair['source'])
-                out_node = text_tree_to_node(inout_pair['target'])
+            inout_pair = json.loads(line)
+            in_node = text_tree_to_node(inout_pair['source'])
+            out_node = text_tree_to_node(inout_pair['target'])
 
             example = {"input": in_node, "output": out_node, "example_type": None}
 
